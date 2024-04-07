@@ -20,7 +20,7 @@ export default function Home() {
   const [city, setCity] = useState('');
 
   useEffect(() => {
-    fetchWeatherData('London'); // Default city
+    fetchWeatherData('Los Angeles'); // Default city
   }, []);
 
   const fetchWeatherData = (cityName) => {
@@ -70,6 +70,21 @@ export default function Home() {
           </p>
         </a>
       </div>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="location">Location:</label>
+        <input type="text" id="location" name="location" placeholder="Enter your city" style={{ color: 'silver', fontFamily: 'Courier New' }}/>
+        <label htmlFor="gender">Gender:</label>
+        <select id="gender" name="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label htmlFor="age">Age:</label>
+        <input type="number" id="age" name="age" placeholder="Enter your age" />
+
+        <button type="submit">Get Clothing Suggestion</button>
+      </form>
     </main>
   )
 }
