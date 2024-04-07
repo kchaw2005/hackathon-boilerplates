@@ -16,39 +16,44 @@ const api = {
 export default function Home() {
 
   const [weatherData, setWeatherData] = useState(null);
+  const [isLoading, setLoading] = useState(true);
+  const [city, setCity] = useState('');
 
   useEffect(() => {
-    // Fetch weather data when component mounts
-    const fetchWeatherData = async () => {
-      try {
-        const response = await fetch(`${api.base}?key=${api.key}&q=Los Angeles&aqi=no`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch weather data');
-        }
-        const data = await response.json();
-        setWeatherData(data);
-      } catch (error) {
-        console.error('Error fetching weather data:', error);
-      }
+    fetchWeatherData('London'); // Default city
+  }, []);
+
+  const fetchWeatherData = (cityName) => {
+    fetch(`https://api.weatherapi.com/v1/current.json?key=${api.key}&q=${cityName}&aqi=no`)
+      .then((res) => res.json())
+      .then((data) => {
+        setWeatherData(data); // Set the fetched data
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setLoading(false); // Ensure loading state is set to false even in case of an error
+      });
     };
 
-    fetchWeatherData();
-  }, []);
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      fetchWeatherData(city);
+    };
 
 
   return (
-    <main className="flex ">
+    <main className="flex flex-col items-center justify-center min-h-screen text-center p-8 md:p-16 lg:p-24">
       <div className="mb-32 text-center lg:mb-0 lg:text-left">
         {/* Display weather data if available */}
         {weatherData && (
-          <div>
-            <h2>Weather in {weatherData.location.name}</h2>
-            <p>Temperature: {weatherData.current.temp_c}°C</p>
-            <p>Condition: {weatherData.current.condition.text}</p>
+          <div style={{ backgroundColor: 'white', color: 'black', fontFamily: 'Courier New', fontSize: '2rem', padding: '10px', borderRadius: '5px' }}>
+            <h2>The weather condition in {weatherData.location.name} is {weatherData.current.condition.text}, with a temperature of {weatherData.current.temp_f}°F</h2>
           </div>
         )}
-
         </div>
+
+        
       <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
